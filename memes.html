@@ -6,23 +6,42 @@
   <title>Meme Mode</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    body {
+      overflow: hidden; /* prevent accidental scroll when button moves */
+    }
     #escape-btn {
       position: absolute;
-      transition: all 0.25s ease;
+      transition: transform 0.25s ease, top 0.25s ease, left 0.25s ease;
       z-index: 999;
+      max-width: 200px;
+      word-wrap: break-word;
+    }
+    .content {
+      position: relative;
+      text-align: center;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    video {
+      max-width: 95vw;
+      border-radius: 12px;
     }
   </style>
 </head>
 <body class="scary-body">
   <div class="content">
-    <video id="meme-player" controls autoplay playsinline style="max-width: 95vw; border-radius: 12px;"></video>
+    <video id="meme-player" controls autoplay playsinline></video>
     <button id="escape-btn" class="modern-btn glass-btn">Click to Escape</button>
     <h2 id="end-message" style="display:none; margin-top: 2rem;">🎃 Happy Halloween! 🎃</h2>
   </div>
 
   <script>
     // --- Meme video playback sequence ---
-    const videos = ["vid5.mp4", "vid2.mp4", "vid3.mp4"]; // your meme videos
+    const videos = ["vid2.mp4", "vid1.mp4", "vid3.mp4", "vid4.mp4", "vid5.mp4", "vid6.mp4"]; // your meme videos
     const player = document.getElementById('meme-player');
     const escapeBtn = document.getElementById("escape-btn");
     const endMsg = document.getElementById("end-message");
@@ -40,7 +59,7 @@
       }
     };
 
-    // --- Moving escape button (dodges taps/clicks) ---
+    // --- Moving escape button (stays within screen bounds) ---
     function moveButtonAway(event) {
       const btnRect = escapeBtn.getBoundingClientRect();
       const pageWidth = window.innerWidth;
@@ -50,37 +69,50 @@
       let x = event.touches ? event.touches[0].clientX : event.clientX;
       let y = event.touches ? event.touches[0].clientY : event.clientY;
 
-      // Distance threshold (how close before it jumps)
-      const threshold = 120;
+      const threshold = 120; // distance at which button flees
 
-      // Check if the pointer is near the button
+      // If pointer is near the button
       if (
         x > btnRect.left - threshold &&
         x < btnRect.right + threshold &&
         y > btnRect.top - threshold &&
         y < btnRect.bottom + threshold
       ) {
-        // Move to random position within screen bounds
-        const newLeft = Math.min(
-          Math.max(Math.random() * (pageWidth - btnRect.width), 10),
-          pageWidth - btnRect.width - 10
+        const btnWidth = btnRect.width;
+        const btnHeight = btnRect.height;
+        const safeMargin = 20;
+
+        // Generate new random position within bounds
+        const newLeft = Math.max(
+          safeMargin,
+          Math.min(Math.random() * (pageWidth - btnWidth - safeMargin), pageWidth - btnWidth - safeMargin)
         );
-        const newTop = Math.min(
-          Math.max(Math.random() * (pageHeight - btnRect.height - 60), 10),
-          pageHeight - btnRect.height - 10
+        const newTop = Math.max(
+          safeMargin,
+          Math.min(Math.random() * (pageHeight - btnHeight - safeMargin), pageHeight - btnHeight - safeMargin)
         );
+
         escapeBtn.style.left = newLeft + "px";
         escapeBtn.style.top = newTop + "px";
       }
     }
 
-    // For mouse and touch devices
+    // Move when approaching with mouse or touch
     document.addEventListener("mousemove", moveButtonAway);
-    document.addEventListener("touchmove", moveButtonAway);
+    document.addEventListener("touchmove", moveButtonAway, { passive: true });
 
-    // Prevent accidental click success
-    escapeBtn.addEventListener("click", () => {
+    // Just in case someone taps directly on it
+    escapeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       moveButtonAway({ clientX: 0, clientY: 0 });
+    });
+
+    // Initial safe placement (center-ish)
+    window.addEventListener("load", () => {
+      const startLeft = window.innerWidth / 2 - escapeBtn.offsetWidth / 2;
+      const startTop = window.innerHeight * 0.75;
+      escapeBtn.style.left = startLeft + "px";
+      escapeBtn.style.top = startTop + "px";
     });
   </script>
 </body>

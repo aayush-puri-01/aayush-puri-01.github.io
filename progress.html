@@ -46,6 +46,16 @@
       0%, 50% { border-color: #00ff9c; }
       50%, 100% { border-color: transparent; }
     }
+    .email-letter {
+      color: #ffcc00;
+      text-shadow: 0 0 6px #ffcc00;
+      font-style: italic;
+      white-space: pre-wrap;
+      transition: opacity 1.2s ease;
+    }
+    .fade-out {
+      opacity: 0;
+    }
   </style>
 </head>
 <body>
@@ -59,15 +69,14 @@
 
     const scanMessages = [
       "Reading your browsing history...",
-      "Why did you search for 'how to dance like a cat'?",
-      "Found 342 cat memes in your gallery.",
+      "Why do you have 47 tabs open on 'Kavreli Samdhi Dancing..'?",
+      "Uploading your 2 AM 'Maobadi Jindabad' voice note to your teams clickup group...",
       "Downloading your funny selfies...",
-      "Forwarding your TikTok drafts to HR...",
-      "Connecting to Dileep Dai’s inbox...",
-      "Fetching your office Slack DMs...",
-      "Analyzing emotional stability after last sprint...",
+      "Forwarding your 'Sick leave' note to HR... with attached selfie in Thamel bar.",
+      "Analyzing emotional stability after last standup...",
       "Accessing coffee consumption logs...",
-      "Almost done scanning..."
+      "Almost done scanning...",
+      "Connecting to Dileep Dai’s inbox...",
     ];
 
     let progress = 0;
@@ -75,7 +84,7 @@
 
     function logMessage(text) {
       const line = document.createElement('div');
-      line.textContent = text;
+      line.innerHTML = text;
       terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
     }
@@ -92,7 +101,7 @@
       }
     }, 700);
 
-    // Phase 2: Fake resignation letter typing
+    // Phase 2: Resignation letter typing
     function startResignationLetter() {
       logMessage("\n[!] Sending resignation letter to Dileep Dai...");
       const letterText = `
@@ -106,16 +115,15 @@ Reasons include but are not limited to:
 - I spent 3 hours debugging why my coffee machine wasn’t committing to Git.
 - My standups have become sit-downs.
 - I can’t stop watching motivational raccoon videos during office hours.
-- And most importantly, I feel spiritually aligned with the office printer’s struggles.
+- And most importantly, I feel spiritually aligned with KP Olis struggles.
 
 Thank you for your guidance and for not blocking YouTube on office Wi-Fi.
 
 Warm regards,
-[Your Totally Sane Employee]
+[Your Totally Sane Former Employee]
       `;
       typeLetter(letterText.trim(), 0, () => {
-        logMessage("\n[INFO] Letter sent successfully to: dileep.dai@company.com");
-        setTimeout(() => window.location.href = "memes.html", 3000);
+        sendLetterAnimation();
       });
     }
 
@@ -123,7 +131,7 @@ Warm regards,
       if (i === 0) {
         const line = document.createElement('div');
         line.id = 'letter';
-        line.classList.add('typing');
+        line.classList.add('typing', 'email-letter');
         terminal.appendChild(line);
       }
       const letter = document.getElementById('letter');
@@ -135,6 +143,21 @@ Warm regards,
         letter.classList.remove('typing');
         callback();
       }
+    }
+
+    // Phase 3: Fade-out "sending" animation
+    function sendLetterAnimation() {
+      const letter = document.getElementById('letter');
+      logMessage("\n[INFO] Sending...");
+      setTimeout(() => {
+        letter.classList.add('fade-out');
+        setTimeout(() => {
+          logMessage('\n[✔] Letter sent successfully to: <span style="color:#ff0077;font-weight:bold;text-shadow:0 0 6px #ff0077;">dileep.dai@company.com</span>');
+          setTimeout(() => {
+            window.location.href = "memes.html";
+          }, 3000);
+        }, 1500);
+      }, 1200);
     }
   </script>
 </body>
