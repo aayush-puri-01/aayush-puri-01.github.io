@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meme Mode</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #escape-btn {
+      position: absolute;
+      transition: all 0.25s ease;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body class="scary-body">
+  <div class="content">
+    <video id="meme-player" controls autoplay playsinline style="max-width: 95vw; border-radius: 12px;"></video>
+    <button id="escape-btn" class="modern-btn glass-btn">Click to Escape</button>
+    <h2 id="end-message" style="display:none; margin-top: 2rem;">🎃 Happy Halloween! 🎃</h2>
+  </div>
+
+  <script>
+    // --- Meme video playback sequence ---
+    const videos = ["vid5.mp4", "vid2.mp4", "vid3.mp4"]; // your meme videos
+    const player = document.getElementById('meme-player');
+    const escapeBtn = document.getElementById("escape-btn");
+    const endMsg = document.getElementById("end-message");
+    let index = 0;
+
+    player.src = videos[index];
+    player.onended = () => {
+      index++;
+      if (index < videos.length) {
+        player.src = videos[index];
+      } else {
+        player.style.display = "none";
+        escapeBtn.style.display = "none";
+        endMsg.style.display = "block";
+      }
+    };
+
+    // --- Moving escape button (dodges taps/clicks) ---
+    function moveButtonAway(event) {
+      const btnRect = escapeBtn.getBoundingClientRect();
+      const pageWidth = window.innerWidth;
+      const pageHeight = window.innerHeight;
+
+      // Cursor/touch position
+      let x = event.touches ? event.touches[0].clientX : event.clientX;
+      let y = event.touches ? event.touches[0].clientY : event.clientY;
+
+      // Distance threshold (how close before it jumps)
+      const threshold = 120;
+
+      // Check if the pointer is near the button
+      if (
+        x > btnRect.left - threshold &&
+        x < btnRect.right + threshold &&
+        y > btnRect.top - threshold &&
+        y < btnRect.bottom + threshold
+      ) {
+        // Move to random position within screen bounds
+        const newLeft = Math.min(
+          Math.max(Math.random() * (pageWidth - btnRect.width), 10),
+          pageWidth - btnRect.width - 10
+        );
+        const newTop = Math.min(
+          Math.max(Math.random() * (pageHeight - btnRect.height - 60), 10),
+          pageHeight - btnRect.height - 10
+        );
+        escapeBtn.style.left = newLeft + "px";
+        escapeBtn.style.top = newTop + "px";
+      }
+    }
+
+    // For mouse and touch devices
+    document.addEventListener("mousemove", moveButtonAway);
+    document.addEventListener("touchmove", moveButtonAway);
+
+    // Prevent accidental click success
+    escapeBtn.addEventListener("click", () => {
+      moveButtonAway({ clientX: 0, clientY: 0 });
+    });
+  </script>
+</body>
+</html>

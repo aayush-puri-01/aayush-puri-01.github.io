@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verifying...</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: black;
+      color: #00ff9c;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      padding: 20px;
+    }
+    .terminal {
+      border: 1px solid #00ff9c;
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      height: 80vh;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.4rem;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00ff9c, #00fff7);
+      transition: width 0.3s;
+    }
+    .typing {
+      border-right: 2px solid #00ff9c;
+      animation: blink 0.7s infinite;
+      white-space: pre-wrap;
+    }
+    @keyframes blink {
+      0%, 50% { border-color: #00ff9c; }
+      50%, 100% { border-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal" id="terminal">
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+
+  <script>
+    const terminal = document.getElementById('terminal');
+    const progressFill = document.getElementById('progress-fill');
+
+    const scanMessages = [
+      "Reading your browsing history...",
+      "Why did you search for 'how to dance like a cat'?",
+      "Found 342 cat memes in your gallery.",
+      "Downloading your funny selfies...",
+      "Forwarding your TikTok drafts to HR...",
+      "Connecting to Dileep Dai’s inbox...",
+      "Fetching your office Slack DMs...",
+      "Analyzing emotional stability after last sprint...",
+      "Accessing coffee consumption logs...",
+      "Almost done scanning..."
+    ];
+
+    let progress = 0;
+    let msgIndex = 0;
+
+    function logMessage(text) {
+      const line = document.createElement('div');
+      line.textContent = text;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Phase 1: Fake scanning progress
+    const interval = setInterval(() => {
+      progress += 10;
+      progressFill.style.width = progress + "%";
+      logMessage("[✔] " + scanMessages[msgIndex]);
+      msgIndex = (msgIndex + 1) % scanMessages.length;
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(startResignationLetter, 800);
+      }
+    }, 700);
+
+    // Phase 2: Fake resignation letter typing
+    function startResignationLetter() {
+      logMessage("\n[!] Sending resignation letter to Dileep Dai...");
+      const letterText = `
+Dear Dileep Dai,
+
+After careful reflection (and several hours of meme research),
+I have decided to resign from my position effective immediately.
+
+Reasons include but are not limited to:
+- I accidentally pushed 'cat_meme_final_v17_final_realfinal.mp4' to production.
+- I spent 3 hours debugging why my coffee machine wasn’t committing to Git.
+- My standups have become sit-downs.
+- I can’t stop watching motivational raccoon videos during office hours.
+- And most importantly, I feel spiritually aligned with the office printer’s struggles.
+
+Thank you for your guidance and for not blocking YouTube on office Wi-Fi.
+
+Warm regards,
+[Your Totally Sane Employee]
+      `;
+      typeLetter(letterText.trim(), 0, () => {
+        logMessage("\n[INFO] Letter sent successfully to: dileep.dai@company.com");
+        setTimeout(() => window.location.href = "memes.html", 3000);
+      });
+    }
+
+    function typeLetter(text, i, callback) {
+      if (i === 0) {
+        const line = document.createElement('div');
+        line.id = 'letter';
+        line.classList.add('typing');
+        terminal.appendChild(line);
+      }
+      const letter = document.getElementById('letter');
+      if (i < text.length) {
+        letter.textContent = text.substring(0, i + 1);
+        terminal.scrollTop = terminal.scrollHeight;
+        setTimeout(() => typeLetter(text, i + 1, callback), 25);
+      } else {
+        letter.classList.remove('typing');
+        callback();
+      }
+    }
+  </script>
+</body>
+</html>
