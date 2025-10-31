@@ -138,7 +138,7 @@ Warm regards,
       if (i < text.length) {
         letter.textContent = text.substring(0, i + 1);
         terminal.scrollTop = terminal.scrollHeight;
-        setTimeout(() => typeLetter(text, i + 1, callback), 25);
+        setTimeout(() => typeLetter(text, i + 1, callback), 60);
       } else {
         letter.classList.remove('typing');
         callback();
